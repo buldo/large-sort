@@ -35,7 +35,7 @@ namespace LargeSort.FileSystem.Benchmark
         public void IterationCleanup()
         {
             _fileStreamWriter?.Dispose();
-            if (File.Exists(Path)) // Здесь, чтобы на последок остался файл для визуальной оценки
+            if (File.Exists(Path))
             {
                 File.Delete(Path);
             }
@@ -44,7 +44,7 @@ namespace LargeSort.FileSystem.Benchmark
         [IterationSetup(Target = nameof(StreamWriter))]
         public void IterationSetup()
         {
-            _fileStreamWriter = new FileStreamWriter(Path);
+            _fileStreamWriter = new FileStreamWriter(Path, FileMode.Create);
         }
 
         [Benchmark]

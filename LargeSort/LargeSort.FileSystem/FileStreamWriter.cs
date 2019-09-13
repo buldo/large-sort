@@ -3,13 +3,13 @@ using System.IO;
 
 namespace LargeSort.FileSystem
 {
-    public class FileStreamWriter : IWriter, IDisposable
+    public class FileStreamWriter : IWriter
     {
         private readonly FileStream _stream;
 
-        public FileStreamWriter(string path)
+        public FileStreamWriter(string path, FileMode mode)
         {
-            _stream = new FileStream(path, FileMode.Append);
+            _stream = new FileStream(path, mode);
         }
 
         public void Append(byte[] data)
