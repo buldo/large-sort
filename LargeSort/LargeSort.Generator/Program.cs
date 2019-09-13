@@ -35,6 +35,7 @@ namespace LargeSort.Generator
             var generator = new Logic.Generator(options.DictionaryFile, writer);
             var watch = Stopwatch.StartNew();
             generator.Generate(options.SizeInGb);
+            generator.Dispose();
             watch.Stop();
             Console.WriteLine($"Сгенерировано за {watch.Elapsed.ToString()}");
         }

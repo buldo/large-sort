@@ -10,7 +10,7 @@ namespace LargeSort.Generator
         [Option('d', "dictionary", Required = false, Default = "dictionary.txt", HelpText = "Файл словаря")]
         public string DictionaryFile { get; set; }
 
-        [Option('o', "output", Default = "out", Required = false)]
+        [Option('o', "output", Default = "out", Required = false, HelpText = "Путь к выходному файлу")]
         public string OutputFile { get; set; }
     }
 }
