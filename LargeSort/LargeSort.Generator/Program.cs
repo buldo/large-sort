@@ -34,7 +34,7 @@ namespace LargeSort.Generator
             var writer = new FileStreamWriter(options.OutputFile, FileMode.Create);
             var generator = new Logic.Generator(options.DictionaryFile, writer);
             var watch = Stopwatch.StartNew();
-            generator.Generate(options.SizeInGb);
+            generator.Generate(options.SizeInGb * 1073741824);
             generator.Dispose();
             watch.Stop();
             Console.WriteLine($"Сгенерировано за {watch.Elapsed.ToString()}");

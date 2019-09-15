@@ -29,7 +29,7 @@ namespace LargeSort.IntegrationTests
                 var generator = new Generator.Logic.Generator(
                     Path.Combine(TestContext.CurrentContext.TestDirectory, "dictionary.txt"),
                     writer);
-                generator.Generate(1);
+                generator.Generate(256 * 1048576);
             }
 
             var sorter = new Sorter("random", "sorted", SortingAlgorithms.Simple, _logger);

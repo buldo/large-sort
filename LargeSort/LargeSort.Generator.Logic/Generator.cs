@@ -21,12 +21,11 @@ namespace LargeSort.Generator.Logic
         /// <summary>
         /// Сгенерировать файл.
         /// </summary>
-        /// <param name="sizeInGb">Примерный размер файла в GB</param>
-        public void Generate(long sizeInGb)
+        /// <param name="size">Примерный размер файла в байтах</param>
+        public void Generate(long size)
         {
             long generated = 0;
-            long toBeGenerated = sizeInGb * 1024 * 1024 * 1024;
-            while (generated < toBeGenerated)
+            while (generated < size)
             {
                 // TODO: Вынести генерацию в отдельный поток
                 var nextNumberBytes = _dataProvider.GetNextNumberBytes();
