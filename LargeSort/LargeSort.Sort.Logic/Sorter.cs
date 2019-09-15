@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using LargeSort.FileSystem;
+using LargeSort.Sort.Logic.Sorting;
 
 namespace LargeSort.Sort.Logic
 {
@@ -10,25 +11,26 @@ namespace LargeSort.Sort.Logic
     {
         private readonly string _inputFile;
         private readonly string _outputFile;
+        private readonly ISortingAlgorithm _sortingAlgorithm;
 
-        public Sorter(string inputFile, string outputFile)
+        public Sorter(string inputFile, string outputFile, ISortingAlgorithm sortingAlgorithm)
         {
             _inputFile = inputFile;
             _outputFile = outputFile;
+            _sortingAlgorithm = sortingAlgorithm;
         }
 
-        public void Sort()
+        public void Sort(DirectoryInfo tempDir = null)
         {
-            var tempDir = Directory.CreateDirectory(Path.Combine(_outputFile, Path.GetRandomFileName()));
+            tempDir ??= Directory.CreateDirectory(Path.Combine(_outputFile, Path.GetRandomFileName()));
 
             var reader = new BatchFileReader(_inputFile);
             List<string> readed;
-            while ((readed = reader.ReadNextBath(512*1024*1024)).Count != 0)
+            while ((readed = reader.ReadNextBath((long)2048*1024*1024)).Count != 0)
             {
                 Console.WriteLine("Сортировка");
-                var copy = readed.ToArray();
-                CSharpStringSort.Sedgewick.InPlaceSort(copy, 0, copy.Length, 0);
-                //readed.Sort();
+                _sortingAlgorithm.Sort(readed);
+
                 var writer = new FileStreamWriter(
                     Path.Combine(tempDir.FullName, Path.GetRandomFileName()),
                     FileMode.Create);
@@ -37,9 +39,9 @@ namespace LargeSort.Sort.Logic
                 foreach (var line in readed)
                 {
                     writer.Append(Encoding.UTF8.GetBytes(line));
+                    writer.Append(Encoding.UTF8.GetBytes(Environment.NewLine));
                 }
 
-                writer.Flush();
                 writer.Dispose();
 
                 Console.WriteLine("Чтение");

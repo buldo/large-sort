@@ -29,6 +29,7 @@ namespace LargeSort.FileSystem
 
         public void Dispose()
         {
+            _stream.Flush(true);
             _stream.Dispose();
         }
     }

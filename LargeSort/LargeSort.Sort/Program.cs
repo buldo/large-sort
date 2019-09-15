@@ -16,7 +16,7 @@ namespace LargeSort.Sort
         private static void Sort(Options options)
         {
             var watch = Stopwatch.StartNew();
-            var sorter = new Sorter(options.InputFile, options.OutputFile);
+            var sorter = new Sorter(options.InputFile, options.OutputFile, SortingAlgorithms.Simple);
             sorter.Sort();
             watch.Stop();
             Console.WriteLine($"Отсортировано за {watch.Elapsed.ToString()}");
