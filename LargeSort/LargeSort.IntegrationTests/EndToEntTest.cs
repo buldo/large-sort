@@ -4,14 +4,21 @@ using LargeSort.FileSystem;
 using LargeSort.IntegrationTests.Assertions;
 using LargeSort.Sort.Logic;
 using NUnit.Framework;
+using Serilog;
 
 namespace LargeSort.IntegrationTests
 {
     public class Tests
     {
+        private ILogger _logger;
+
         [SetUp]
         public void Setup()
         {
+            _logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .CreateLogger();
         }
 
         [Test]
@@ -25,14 +32,14 @@ namespace LargeSort.IntegrationTests
                 generator.Generate(1);
             }
 
-            var sorter = new Sorter("random", "sorted", SortingAlgorithms.Simple);
+            var sorter = new Sorter("random", "sorted", SortingAlgorithms.Simple, _logger);
             var sortedDir = Directory.CreateDirectory("temp");
             foreach (var fileInfo in sortedDir.GetFiles())
             {
                 fileInfo.Delete();
             }
 
-            sorter.Sort(sortedDir);
+            sorter.Sort(sortedDir, false);
 
             foreach (var file in sortedDir.GetFiles())
             {

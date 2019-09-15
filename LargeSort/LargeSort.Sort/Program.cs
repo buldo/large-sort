@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using CommandLine;
 using LargeSort.Sort.Logic;
+using Serilog;
 
 namespace LargeSort.Sort
 {
@@ -15,8 +16,13 @@ namespace LargeSort.Sort
 
         private static void Sort(Options options)
         {
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.Console()
+                .CreateLogger();
+
             var watch = Stopwatch.StartNew();
-            var sorter = new Sorter(options.InputFile, options.OutputFile, SortingAlgorithms.Simple);
+            var sorter = new Sorter(options.InputFile, options.OutputFile, SortingAlgorithms.Simple, logger);
             sorter.Sort();
             watch.Stop();
             Console.WriteLine($"Отсортировано за {watch.Elapsed.ToString()}");
