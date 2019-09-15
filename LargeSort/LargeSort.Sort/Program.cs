@@ -23,7 +23,7 @@ namespace LargeSort.Sort
 
             var watch = Stopwatch.StartNew();
             var sorter = new Sorter(options.InputFile, options.OutputFile, SortingAlgorithms.Simple, logger);
-            sorter.Sort();
+            sorter.Sort(16777216);
             watch.Stop();
             Console.WriteLine($"Отсортировано за {watch.Elapsed.ToString()}");
         }

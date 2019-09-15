@@ -21,7 +21,7 @@ namespace LargeSort.Sort.Logic
             long reads = 0;
             while ((line = _reader.ReadLine()) != null && reads < bytesInMemory)
             {
-                reads += line.Length * 2;
+                reads += Encoding.Default.GetByteCount(line) + 18;
                 ret.Add(line);
             }
 

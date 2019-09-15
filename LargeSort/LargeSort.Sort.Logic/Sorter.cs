@@ -23,7 +23,7 @@ namespace LargeSort.Sort.Logic
             _logger = logger;
         }
 
-        public void Sort(DirectoryInfo tempDir = null, bool removeTempDir = true)
+        public void Sort(int bathSize, DirectoryInfo tempDir = null, bool removeTempDir = true)
         {
             tempDir ??= Directory.CreateDirectory(Path.Combine(_outputFile, Path.GetRandomFileName()));
 

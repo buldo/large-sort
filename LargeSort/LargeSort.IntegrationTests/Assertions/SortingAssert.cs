@@ -11,6 +11,7 @@ namespace LargeSort.IntegrationTests.Assertions
         public static void FileSorted(string path, IComparer<string> comparer)
         {
             string prevLine = string.Empty;
+            Assert.True(File.Exists(path));
             using var reader = new StreamReader(path);
             string currentLine = null;
             while ((currentLine = reader.ReadLine()) != null)
