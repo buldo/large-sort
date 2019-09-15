@@ -35,8 +35,8 @@ namespace LargeSort.IntegrationTests
 
             const string sortedFileName = "sorted";
             File.Delete(sortedFileName);
-            var sorter = new Sorter(randomFileName, "temp", SortingAlgorithms.Simple, _logger);
             var sortedDir = Directory.CreateDirectory(TestContext.CurrentContext.Test.Name);
+            var sorter = new Sorter(randomFileName, sortedDir.FullName, SortingAlgorithms.Simple, _logger);
             foreach (var fileInfo in sortedDir.GetFiles())
             {
                 fileInfo.Delete();
@@ -48,6 +48,10 @@ namespace LargeSort.IntegrationTests
             }
 
             SortingAssert.FileSorted(sortedFileName, StringComparer.Ordinal);
+
+            var expectedLines = File.ReadAllLines(randomFileName).Length;
+            var actualLines = File.ReadAllLines(sortedFileName);
+            Assert.AreEqual(expectedLines, actualLines);
         }
     }
 }

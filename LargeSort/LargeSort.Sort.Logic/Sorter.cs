@@ -50,6 +50,9 @@ namespace LargeSort.Sort.Logic
                         writer.Append(Encoding.UTF8.GetBytes(line));
                         writer.Append(Encoding.UTF8.GetBytes(Environment.NewLine));
                     }
+
+                    readed = null;
+                    GC.Collect();
                 }
             }
         }
