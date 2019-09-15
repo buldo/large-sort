@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using LargeSort.FileSystem;
+using LargeSort.Sort.Logic.Merge;
 using LargeSort.Sort.Logic.Sorting;
 using Serilog;
 
@@ -11,43 +12,38 @@ namespace LargeSort.Sort.Logic
     public class Sorter
     {
         private readonly string _inputFile;
-        private readonly string _outputFile;
+        private readonly string _tempFolder;
         private readonly ISortingAlgorithm _sortingAlgorithm;
         private readonly ILogger _logger;
 
-        public Sorter(string inputFile, string outputFile, ISortingAlgorithm sortingAlgorithm, ILogger logger)
+        public Sorter(string inputFile, string tempFolder, ISortingAlgorithm sortingAlgorithm, ILogger logger)
         {
             _inputFile = inputFile;
-            _outputFile = outputFile;
+            _tempFolder = tempFolder;
             _sortingAlgorithm = sortingAlgorithm;
             _logger = logger;
         }
 
-        public void Sort(int bathSize, DirectoryInfo tempDir = null, bool removeTempDir = true)
+        public void Sort(int bathSize, IWriter outputWriter)
         {
-            tempDir ??= Directory.CreateDirectory(Path.Combine(_outputFile, Path.GetRandomFileName()));
+            PreSort(bathSize);
 
-            PreSort(tempDir);
-
-            if (removeTempDir)
-            {
-                tempDir.Delete(true);
-            }
+            MultiWayFilesMerge.Merge(_tempFolder, outputWriter);
         }
 
-        private void PreSort(DirectoryInfo tempDir)
+        private void PreSort(int bathSize)
         {
             _logger.Information("Pre sorting");
 
             using (var reader = new BatchFileReader(_inputFile))
             {
                 List<string> readed;
-                while ((readed = ReadNext(reader)).Count != 0)
+                while ((readed = ReadNext(reader, bathSize, _logger)).Count != 0)
                 {
                     _logger.Debug("Sorting");
                     _sortingAlgorithm.Sort(readed);
 
-                    using var writer = new FileStreamWriter(Path.Combine(tempDir.FullName, Path.GetRandomFileName()),FileMode.Create);
+                    using var writer = new FileStreamWriter(Path.Combine(_tempFolder, Path.GetRandomFileName()),FileMode.Create);
                     _logger.Debug("Writing");
                     foreach (var line in readed)
                     {
@@ -56,15 +52,15 @@ namespace LargeSort.Sort.Logic
                     }
                 }
             }
+        }
 
-            List<string> ReadNext(BatchFileReader batchFileReader)
-            {
-                _logger.Debug("Reading next batch");
-                var strings = batchFileReader.ReadNextBath((long) 2048 * 1024 * 1024);
-                _logger.Debug($"Read {strings.Count} lines");
+        private static List<string> ReadNext(BatchFileReader batchFileReader, int size, ILogger logger)
+        {
+            logger.Debug("Reading next batch");
+            var strings = batchFileReader.ReadNextBath(size);
+            logger.Debug($"Read {strings.Count} lines");
 
-                return strings;
-            }
+            return strings;
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using CommandLine;
+using LargeSort.FileSystem;
 using LargeSort.Sort.Logic;
 using Serilog;
 
@@ -22,8 +24,14 @@ namespace LargeSort.Sort
                 .CreateLogger();
 
             var watch = Stopwatch.StartNew();
-            var sorter = new Sorter(options.InputFile, options.OutputFile, SortingAlgorithms.Simple, logger);
-            sorter.Sort(16777216);
+            var tempDir = Path.Combine(Path.GetDirectoryName(options.OutputFile), Path.GetRandomFileName());
+            var sorter = new Sorter(options.InputFile, tempDir, SortingAlgorithms.Simple, logger);
+            using (var writer = new FileStreamWriter(options.OutputFile, FileMode.Create))
+            {
+                sorter.Sort(16777216, writer);
+            }
+
+
             watch.Stop();
             Console.WriteLine($"Отсортировано за {watch.Elapsed.ToString()}");
         }

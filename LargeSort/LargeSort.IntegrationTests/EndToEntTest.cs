@@ -22,32 +22,6 @@ namespace LargeSort.IntegrationTests
         }
 
         [Test]
-        public void GenerateAndSortSingleChunkSuccess()
-        {
-            using (var writer = new FileStreamWriter("random", FileMode.Create))
-            {
-                var generator = new Generator.Logic.Generator(
-                    Path.Combine(TestContext.CurrentContext.TestDirectory, "dictionary.txt"),
-                    writer);
-                generator.Generate(256 * 1048576);
-            }
-
-            var sorter = new Sorter("random", "sorted", SortingAlgorithms.Simple, _logger);
-            var sortedDir = Directory.CreateDirectory(TestContext.CurrentContext.Test.Name);
-            foreach (var fileInfo in sortedDir.GetFiles())
-            {
-                fileInfo.Delete();
-            }
-
-            sorter.Sort(16777216, sortedDir, false);
-
-            foreach (var file in sortedDir.GetFiles())
-            {
-                SortingAssert.FileSorted(file.FullName, StringComparer.Ordinal);
-            }
-        }
-
-        [Test]
         public void GenerateAndSortMultiChunkSuccess()
         {
             const string randomFileName = "random";
@@ -61,14 +35,17 @@ namespace LargeSort.IntegrationTests
 
             const string sortedFileName = "sorted";
             File.Delete(sortedFileName);
-            var sorter = new Sorter(randomFileName, sortedFileName, SortingAlgorithms.Simple, _logger);
+            var sorter = new Sorter(randomFileName, "temp", SortingAlgorithms.Simple, _logger);
             var sortedDir = Directory.CreateDirectory(TestContext.CurrentContext.Test.Name);
             foreach (var fileInfo in sortedDir.GetFiles())
             {
                 fileInfo.Delete();
             }
 
-            sorter.Sort(64 * 1048576, sortedDir, false);
+            using (var writer = new FileStreamWriter(sortedFileName, FileMode.Create))
+            {
+                sorter.Sort(64 * 1048576, writer);
+            }
 
             SortingAssert.FileSorted(sortedFileName, StringComparer.Ordinal);
         }
