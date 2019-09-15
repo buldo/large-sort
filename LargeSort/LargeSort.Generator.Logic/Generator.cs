@@ -28,6 +28,7 @@ namespace LargeSort.Generator.Logic
             long toBeGenerated = sizeInGb * 1024 * 1024 * 1024;
             while (generated < toBeGenerated)
             {
+                // TODO: Вынести генерацию в отдельный поток
                 var nextNumberBytes = _dataProvider.GetNextNumberBytes();
                 _writer.Append(nextNumberBytes);
                 generated += nextNumberBytes.Length;
