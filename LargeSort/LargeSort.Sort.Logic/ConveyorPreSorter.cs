@@ -32,7 +32,7 @@ namespace LargeSort.Sort.Logic
 
                 var tasks = new List<Task>();
 
-                List<string> readed;
+                List<CompositeString> readed;
                 while ((readed = ReadNext(reader, bathSize, _logger)).Count != 0)
                 {
                     semaphore.Wait();
@@ -54,7 +54,7 @@ namespace LargeSort.Sort.Logic
             _logger.Information($"Pre sorting ended in {watch.Elapsed.ToString()}");
         }
 
-        private static List<string> ReadNext(BatchFileReader readerWriter, int size, ILogger logger)
+        private static List<CompositeString> ReadNext(BatchFileReader readerWriter, int size, ILogger logger)
         {
             logger.Debug("Reading next batch");
             var strings = readerWriter.ReadNextBath(size);
@@ -65,22 +65,20 @@ namespace LargeSort.Sort.Logic
 
         private static void StartSortAndWrite(
             ISortingAlgorithm sortingAlgorithm,
-            List<string> toSort,
+            List<CompositeString> toSort,
             string tempFolder,
             SemaphoreSlim semaphore,
             ILogger logger)
         {
-            toSort = toSort.ToList();
             logger.Debug("Sorting");
             sortingAlgorithm.Sort(toSort);
 
-            using (var writer =
-                new FileStreamWriter(Path.Combine(tempFolder, Path.GetRandomFileName()), FileMode.Create))
+            using (var writer = new FileStreamWriter(Path.Combine(tempFolder, Path.GetRandomFileName()), FileMode.Create))
             {
                 logger.Debug("Writing");
                 foreach (var line in toSort)
                 {
-                    writer.Append(Encoding.UTF8.GetBytes(line));
+                    writer.Append(Encoding.UTF8.GetBytes(line.Original));
                     writer.Append(NewLineBytes);
                 }
 

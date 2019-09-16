@@ -5,9 +5,10 @@ namespace LargeSort.Sort.Logic.Sorting
 {
     internal class SimpleSortingAlgorithm : ISortingAlgorithm
     {
-        public void Sort(List<string> toSort)
+        private readonly Comparer _comparer = new Comparer();
+        public void Sort(List<CompositeString> toSort)
         {
-            toSort.Sort(StringComparer.Ordinal);
+            toSort.Sort(_comparer);
         }
     }
 }

@@ -7,9 +7,9 @@ namespace LargeSort.Sort.Logic.Sorting
 {
     internal class SedgewicSortingAlgorithm : ISortingAlgorithm
     {
-        public void Sort(List<string> toSort)
+        public void Sort(List<CompositeString> toSort)
         {
-            Sedgewick.InPlaceSort(toSort,0, toSort.Count,0);
+            //Sedgewick.InPlaceSort(toSort,0, toSort.Count,0);
         }
     }
 }
