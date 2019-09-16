@@ -32,6 +32,20 @@ namespace LargeSort.Sort.Logic.Merge
 
         public string CurrentValue { get; private set; }
 
+        public static bool operator <(FileInMerge first, FileInMerge second)
+        {
+
+            return Compare(first, second) < 0;
+
+        }
+
+        public static bool operator >(FileInMerge first, FileInMerge second)
+        {
+
+            return Compare(first, second) > 0;
+
+        }
+
         public bool ReadNext()
         {
             CurrentValue = _reader.ReadLine();
@@ -45,10 +59,15 @@ namespace LargeSort.Sort.Logic.Merge
 
         public int CompareTo(FileInMerge other)
         {
-            var compareResult = string.Compare(CurrentValue, other.CurrentValue, StringComparison.Ordinal);
+            return Compare(this, other);
+        }
+
+        private static int Compare(FileInMerge first, FileInMerge second)
+        {
+            var compareResult = string.Compare(first.CurrentValue, second.CurrentValue, StringComparison.Ordinal);
             if (compareResult == 0)
             {
-                compareResult = string.Compare(FileName, other.FileName, StringComparison.Ordinal);
+                compareResult = string.Compare(first.FileName, second.FileName, StringComparison.Ordinal);
             }
 
             return compareResult;

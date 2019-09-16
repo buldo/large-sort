@@ -15,7 +15,7 @@ namespace CSharpStringSort
             return s[pos];
         }
 
-        static int medianOf3(string[] x, int a, int b, int c, int depth)
+        static int medianOf3(List<string> x, int a, int b, int c, int depth)
         {
             char va, vb, vc;
             if ((va = CharOrNull(x[a], depth)) == (vb = CharOrNull(x[b], depth)))
@@ -29,7 +29,7 @@ namespace CSharpStringSort
 
         //Pathological case is: strings with long common prefixes will
         //          cause long running times
-        public static void InsertionSort(string[] x, int a, int n, int depth)
+        public static void InsertionSort(List<string> x, int a, int n, int depth)
         {
             int pi;
             int pj;
@@ -52,7 +52,7 @@ namespace CSharpStringSort
             }
         }
 
-        static void vecswap(string[] x, int a, int b, long n)
+        static void vecswap(List<string> x, int a, int b, long n)
         {
 
             while (n-- > 0)
@@ -64,16 +64,15 @@ namespace CSharpStringSort
         }
 
 
-        public static string[] Sort(string[] input)
+        public static List<string> Sort(List<string> input)
         {
-            string[] copy = new string[input.Length];
-            input.CopyTo(copy, 0);
-            InPlaceSort(copy, 0, copy.Length, 0);
+            var copy = input.ToList();
+            InPlaceSort(copy, 0, copy.Count, 0);
             return copy;
         }
 
 
-        public static void InPlaceSort(string[] x, int a, int n, int depth)
+        public static void InPlaceSort(List<string> x, int a, int n, int depth)
         {
             char partval;
             int d, r;

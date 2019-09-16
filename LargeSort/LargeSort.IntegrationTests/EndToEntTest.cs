@@ -31,7 +31,7 @@ namespace LargeSort.IntegrationTests
                 var generator = new Generator.Logic.Generator(
                     Path.Combine(TestContext.CurrentContext.TestDirectory, "dictionary.txt"),
                     writer);
-                generator.Generate(256 * 1048576);
+                generator.Generate(1024 * 1048576);
             }
 
             var sortWatch = Stopwatch.StartNew();
