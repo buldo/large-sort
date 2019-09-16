@@ -59,7 +59,7 @@ namespace LargeSort.Sort.Logic.Merge
 
             var sortedFiles = new SortedSet<FileInMerge>(filesList);
 
-            var bufferedWriter = new BufferedWriter(256 * 1048576, writer);
+            var bufferedWriter = new BufferedWriter(1024 * 1048576, writer);
 
             while (sortedFiles.Count != 0)
             {
@@ -67,6 +67,8 @@ namespace LargeSort.Sort.Logic.Merge
                 sortedFiles.Remove(min);
                 bufferedWriter.Write(Encoding.UTF8.GetBytes(min.CurrentValue));
                 bufferedWriter.Write(Encoding.UTF8.GetBytes(Environment.NewLine));
+                //writer.Append(Encoding.UTF8.GetBytes(min.CurrentValue));
+                //writer.Append(Encoding.UTF8.GetBytes(Environment.NewLine));
                 if (min.ReadNext())
                 {
                     sortedFiles.Add(min);

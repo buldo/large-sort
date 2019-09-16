@@ -14,6 +14,7 @@ namespace LargeSort.Sort.Logic
 {
     class ConveyorPreSorter
     {
+        private static readonly byte[] NewLineBytes = Encoding.UTF8.GetBytes(Environment.NewLine);
         private readonly ILogger _logger;
 
         public ConveyorPreSorter(ILogger logger)
@@ -27,14 +28,12 @@ namespace LargeSort.Sort.Logic
             var watch = Stopwatch.StartNew();
             using (var reader = new BatchFileReader(inputFile))
             {
-                var readerWriter = new BlockedReaderWriter(reader, _logger);
-
                 var semaphore = new SemaphoreSlim(parallels, parallels);
 
                 var tasks = new List<Task>();
 
                 List<string> readed;
-                while ((readed = ReadNext(readerWriter, bathSize, _logger)).Count != 0)
+                while ((readed = ReadNext(reader, bathSize, _logger)).Count != 0)
                 {
                     semaphore.Wait();
                     var clone = readed.ToList();
@@ -45,7 +44,6 @@ namespace LargeSort.Sort.Logic
                                 clone,
                                 tempFolder,
                                 semaphore,
-                                readerWriter,
                                 _logger),
                             TaskCreationOptions.LongRunning));
                 }
@@ -56,10 +54,10 @@ namespace LargeSort.Sort.Logic
             _logger.Information($"Pre sorting ended in {watch.Elapsed.ToString()}");
         }
 
-        private static List<string> ReadNext(BlockedReaderWriter readerWriter, int size, ILogger logger)
+        private static List<string> ReadNext(BatchFileReader readerWriter, int size, ILogger logger)
         {
             logger.Debug("Reading next batch");
-            var strings = readerWriter.Read(size);
+            var strings = readerWriter.ReadNextBath(size);
             logger.Debug($"Read {strings.Count} lines");
 
             return strings;
@@ -70,26 +68,24 @@ namespace LargeSort.Sort.Logic
             List<string> toSort,
             string tempFolder,
             SemaphoreSlim semaphore,
-            BlockedReaderWriter readerWriter,
             ILogger logger)
         {
             toSort = toSort.ToList();
             logger.Debug("Sorting");
             sortingAlgorithm.Sort(toSort);
 
-            readerWriter.Write(() =>
+            using (var writer =
+                new FileStreamWriter(Path.Combine(tempFolder, Path.GetRandomFileName()), FileMode.Create))
             {
-                using (var writer = new FileStreamWriter(Path.Combine(tempFolder, Path.GetRandomFileName()), FileMode.Create))
+                logger.Debug("Writing");
+                foreach (var line in toSort)
                 {
-                    logger.Debug("Writing");
-                    foreach (var line in toSort)
-                    {
-                        writer.Append(Encoding.UTF8.GetBytes(line));
-                        writer.Append(Encoding.UTF8.GetBytes(Environment.NewLine));
-                    }
-                    writer.Flush();
+                    writer.Append(Encoding.UTF8.GetBytes(line));
+                    writer.Append(NewLineBytes);
                 }
-            });
+
+                writer.Flush();
+            }
 
             semaphore.Release();
         }
