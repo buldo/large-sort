@@ -21,12 +21,7 @@ namespace LargeSort.Sort.Logic
 
         public int CompareTo(CompositeString other)
         {
-            var thisLen = Original.Length - WordIndex;
-            var otherLen = other.Original.Length - other.WordIndex;
-            int result = string.Compare(
-                Original, WordIndex,
-                other.Original, other.WordIndex,
-                thisLen < otherLen ? thisLen : otherLen);
+            int result = Original.AsSpan(WordIndex).CompareTo(other.Original.AsSpan(other.WordIndex), StringComparison.Ordinal);
 
             if (result == 0)
             {
