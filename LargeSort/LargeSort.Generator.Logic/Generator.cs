@@ -28,9 +28,8 @@ namespace LargeSort.Generator.Logic
             string toWrite = null;
             while (generated < size)
             {
-                //var toWrite = $"{_dataProvider.GetNextNumber()}. {_dataProvider.GetNextWord()}{Environment.NewLine}{_dataProvider.GetNextNumber()}. {_dataProvider.GetNextWord()}{Environment.NewLine}{_dataProvider.GetNextNumber()}. {_dataProvider.GetNextWord()}{Environment.NewLine}{_dataProvider.GetNextNumber()}. {_dataProvider.GetNextWord()}";
                 toWrite = $"{_dataProvider.GetNextNumber(100)}. {_dataProvider.GetNextWord()}";
-                generated += Encoding.UTF8.GetByteCount(toWrite);
+                generated += Encoding.UTF8.GetByteCount(toWrite) +2; // минус пара байт на перенос строки
                 _writer.AppendLine(toWrite);
             }
             _writer.AppendLine(toWrite);

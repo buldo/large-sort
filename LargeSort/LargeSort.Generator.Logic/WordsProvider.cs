@@ -15,12 +15,6 @@ namespace LargeSort.Generator.Logic
             _seedWords = File.ReadAllLines(dictionaryPath);
         }
 
-        public ReadOnlySpan<byte> GetNextWordBytes()
-        {
-            var wordId = _random.Next(0, _seedWords.Length);
-            return Encoding.UTF8.GetBytes(_seedWords[wordId]);
-        }
-
         public string GetNextWord()
         {
             var wordId = _random.Next(0, _seedWords.Length);
