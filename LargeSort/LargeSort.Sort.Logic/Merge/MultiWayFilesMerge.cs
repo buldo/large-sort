@@ -15,6 +15,7 @@ namespace LargeSort.Sort.Logic.Merge
     internal class MultiWayFilesMerge
     {
         private readonly ILogger _logger;
+        private static readonly byte[] NewLineBytes = Encoding.UTF8.GetBytes(Environment.NewLine);
 
         public MultiWayFilesMerge(ILogger logger)
         {
@@ -65,10 +66,8 @@ namespace LargeSort.Sort.Logic.Merge
             {
                 var min = sortedFiles.Min;
                 sortedFiles.Remove(min);
-                bufferedWriter.Write(Encoding.UTF8.GetBytes(min.CurrentValue));
-                bufferedWriter.Write(Encoding.UTF8.GetBytes(Environment.NewLine));
-                //writer.Append(Encoding.UTF8.GetBytes(min.CurrentValue));
-                //writer.Append(Encoding.UTF8.GetBytes(Environment.NewLine));
+                bufferedWriter.Write(Encoding.UTF8.GetBytes(min.CurrentValue.Original));
+                bufferedWriter.Write(NewLineBytes);
                 if (min.ReadNext())
                 {
                     sortedFiles.Add(min);

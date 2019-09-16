@@ -30,7 +30,7 @@ namespace LargeSort.Sort.Logic.Merge
 
         public string FileName { get; }
 
-        public string CurrentValue { get; private set; }
+        public CompositeString CurrentValue { get; private set; }
 
         public static bool operator <(FileInMerge first, FileInMerge second)
         {
@@ -48,8 +48,15 @@ namespace LargeSort.Sort.Logic.Merge
 
         public bool ReadNext()
         {
-            CurrentValue = _reader.ReadLine();
-            return !string.IsNullOrWhiteSpace(CurrentValue);
+            var line = _reader.ReadLine();
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                CurrentValue = null;
+                return false;
+            }
+
+            CurrentValue = new CompositeString(line);
+            return true;
         }
 
         public void Dispose()
@@ -64,7 +71,7 @@ namespace LargeSort.Sort.Logic.Merge
 
         private static int Compare(FileInMerge first, FileInMerge second)
         {
-            var compareResult = string.Compare(first.CurrentValue, second.CurrentValue, StringComparison.Ordinal);
+            var compareResult = first.CurrentValue.CompareTo(second.CurrentValue);
             if (compareResult == 0)
             {
                 compareResult = string.Compare(first.FileName, second.FileName, StringComparison.Ordinal);
