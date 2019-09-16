@@ -25,23 +25,15 @@ namespace LargeSort.Generator.Logic
         public void Generate(long size)
         {
             long generated = 0;
+            string toWrite = null;
             while (generated < size)
             {
-                // TODO: Вынести генерацию в отдельный поток
-                var nextNumberBytes = _dataProvider.GetNextNumberBytes();
-                _writer.Append(nextNumberBytes);
-                generated += nextNumberBytes.Length;
-
-                _writer.Append( _dataProvider.DotSpaceBytes);
-                generated += _dataProvider.DotSpaceBytes.Length;
-
-                var nextNextWordBytes = _dataProvider.GetNextWordBytes();
-                _writer.Append(nextNextWordBytes);
-                generated += nextNextWordBytes.Length;
-
-                _writer.Append(_dataProvider.LineEndBytes);
-                generated += _dataProvider.LineEndBytes.Length;
+                //var toWrite = $"{_dataProvider.GetNextNumber()}. {_dataProvider.GetNextWord()}{Environment.NewLine}{_dataProvider.GetNextNumber()}. {_dataProvider.GetNextWord()}{Environment.NewLine}{_dataProvider.GetNextNumber()}. {_dataProvider.GetNextWord()}{Environment.NewLine}{_dataProvider.GetNextNumber()}. {_dataProvider.GetNextWord()}";
+                toWrite = $"{_dataProvider.GetNextNumber(100)}. {_dataProvider.GetNextWord()}";
+                generated += Encoding.UTF8.GetByteCount(toWrite);
+                _writer.AppendLine(toWrite);
             }
+            _writer.AppendLine(toWrite);
 
             _writer.Flush();
         }

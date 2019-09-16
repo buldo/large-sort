@@ -8,5 +8,6 @@ namespace LargeSort.FileSystem
 
         void Flush();
         void Append(ReadOnlySpan<byte> data);
+        void AppendLine(string data);
     }
 }

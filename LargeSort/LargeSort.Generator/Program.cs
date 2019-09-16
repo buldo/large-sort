@@ -12,21 +12,6 @@ namespace LargeSort.Generator
         {
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed<Options>(GenerateData);
-            //long written = 0;
-            //long target = (long)4 * 1024 * 1024 * 1024;
-            //var writer = new FileStreamWriter(@"D:\testFolder\out");
-            //var watch = Stopwatch.StartNew();
-            ////while (written < target)
-            ////{
-            ////    writer.Append(Guid.NewGuid().ToByteArray());
-            ////    written += 16;
-            ////}
-            //var dataProvider = new DataProvider();
-
-            //writer.Dispose();
-            //watch.Stop();
-
-            //Console.WriteLine(watch.Elapsed.ToString());
         }
 
         private static void GenerateData(Options options)
