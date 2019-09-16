@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using LargeSort.FileSystem;
 using LargeSort.IntegrationTests.Assertions;
@@ -33,6 +34,8 @@ namespace LargeSort.IntegrationTests
                 generator.Generate(256 * 1048576);
             }
 
+            var sortWatch = Stopwatch.StartNew();
+
             const string sortedFileName = "sorted";
             File.Delete(sortedFileName);
             var sortedDir = Directory.CreateDirectory(TestContext.CurrentContext.Test.Name);
@@ -44,14 +47,18 @@ namespace LargeSort.IntegrationTests
 
             using (var writer = new FileStreamWriter(sortedFileName, FileMode.Create))
             {
-                sorter.Sort(64 * 1048576, writer);
+                sorter.Sort(64 * 1048576, writer, 8);
+                writer.Flush();
             }
 
             SortingAssert.FileSorted(sortedFileName, StringComparer.Ordinal);
 
             var expectedLines = File.ReadAllLines(randomFileName).Length;
-            var actualLines = File.ReadAllLines(sortedFileName);
+            var actualLines = File.ReadAllLines(sortedFileName).Length;
             Assert.AreEqual(expectedLines, actualLines);
+
+            sortWatch.Stop();
+            _logger.Information($"Sorted for {sortWatch.Elapsed.ToString()}");
         }
     }
 }

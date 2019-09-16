@@ -22,10 +22,14 @@ namespace LargeSort.Sort.Logic
             var ret = new List<string>(_prevSize == 0 ? 10000 : _prevSize);
             string line;
             long reads = 0;
-            while ((line = _reader.ReadLine()) != null && reads < bytesInMemory)
+            while ((line = _reader.ReadLine()) != null)
             {
                 reads += Encoding.Default.GetByteCount(line) + 18;
                 ret.Add(line);
+                if (reads > bytesInMemory)
+                {
+                    break;
+                }
             }
 
             _prevSize = ret.Count;

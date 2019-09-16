@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using LargeSort.FileSystem;
@@ -15,6 +16,8 @@ namespace LargeSort.Sort.Logic
         private readonly string _tempFolder;
         private readonly ISortingAlgorithm _sortingAlgorithm;
         private readonly ILogger _logger;
+        private readonly ConveyorPreSorter _preSorter;
+        private readonly MultiWayFilesMerge _filesMerge;
 
         public Sorter(string inputFile, string tempFolder, ISortingAlgorithm sortingAlgorithm, ILogger logger)
         {
@@ -22,48 +25,14 @@ namespace LargeSort.Sort.Logic
             _tempFolder = tempFolder;
             _sortingAlgorithm = sortingAlgorithm;
             _logger = logger;
+            _preSorter = new ConveyorPreSorter(logger);
+            _filesMerge = new MultiWayFilesMerge(logger);
         }
 
-        public void Sort(int bathSize, IWriter outputWriter)
+        public void Sort(int bathSize, IWriter outputWriter, int parallels)
         {
-            PreSort(bathSize);
-
-            MultiWayFilesMerge.Merge(_tempFolder, outputWriter);
-        }
-
-        private void PreSort(int bathSize)
-        {
-            _logger.Information("Pre sorting");
-
-            using (var reader = new BatchFileReader(_inputFile))
-            {
-                List<string> readed;
-                while ((readed = ReadNext(reader, bathSize, _logger)).Count != 0)
-                {
-                    _logger.Debug("Sorting");
-                    _sortingAlgorithm.Sort(readed);
-
-                    using var writer = new FileStreamWriter(Path.Combine(_tempFolder, Path.GetRandomFileName()),FileMode.Create);
-                    _logger.Debug("Writing");
-                    foreach (var line in readed)
-                    {
-                        writer.Append(Encoding.UTF8.GetBytes(line));
-                        writer.Append(Encoding.UTF8.GetBytes(Environment.NewLine));
-                    }
-
-                    readed = null;
-                    GC.Collect();
-                }
-            }
-        }
-
-        private static List<string> ReadNext(BatchFileReader batchFileReader, int size, ILogger logger)
-        {
-            logger.Debug("Reading next batch");
-            var strings = batchFileReader.ReadNextBath(size);
-            logger.Debug($"Read {strings.Count} lines");
-
-            return strings;
+            _preSorter.PreSort(_inputFile,_tempFolder,_sortingAlgorithm,bathSize, parallels);
+            _filesMerge.Merge(_tempFolder, outputWriter);
         }
     }
 }

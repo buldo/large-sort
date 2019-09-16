@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
+using Serilog;
 
 namespace LargeSort.Sort.Logic.Merge
 {
@@ -9,10 +11,24 @@ namespace LargeSort.Sort.Logic.Merge
     {
         private readonly StreamReader _reader;
 
-        public FileInMerge(string fileName)
+        public FileInMerge(string fileName, ILogger logger)
         {
-            _reader = new StreamReader(fileName);
+            FileName = fileName;
+            while (_reader == null)
+            {
+                try
+                {
+                    _reader = new StreamReader(fileName, Encoding.UTF8);
+                }
+                catch (Exception e)
+                {
+                    logger.Error(e, "Not able to open file");
+                    Thread.Sleep(50);
+                }
+            }
         }
+
+        public string FileName { get; }
 
         public string CurrentValue { get; private set; }
 
@@ -29,7 +45,13 @@ namespace LargeSort.Sort.Logic.Merge
 
         public int CompareTo(FileInMerge other)
         {
-            return string.Compare(CurrentValue, other.CurrentValue, StringComparison.Ordinal);
+            var compareResult = string.Compare(CurrentValue, other.CurrentValue, StringComparison.Ordinal);
+            if (compareResult == 0)
+            {
+                compareResult = string.Compare(FileName, other.FileName, StringComparison.Ordinal);
+            }
+
+            return compareResult;
         }
     }
 }

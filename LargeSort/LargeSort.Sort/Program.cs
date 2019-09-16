@@ -28,7 +28,7 @@ namespace LargeSort.Sort
             var sorter = new Sorter(options.InputFile, tempDir.FullName, SortingAlgorithms.Simple, logger);
             using (var writer = new FileStreamWriter(options.OutputFile, FileMode.Create))
             {
-                sorter.Sort(256 * 1048576, writer);
+                sorter.Sort(64 * 1048576, writer, options.ThreadsCount);
             }
 
 
