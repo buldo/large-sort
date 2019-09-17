@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Serilog;
 
 namespace LargeSort.Sort.Logic
 {
@@ -10,7 +11,15 @@ namespace LargeSort.Sort.Logic
         {
             Original = original;
             WordIndex = original.IndexOf(". ", StringComparison.Ordinal) + 2;
-            Number = long.Parse(original.AsSpan(0, WordIndex - 2));
+            try
+            {
+                Number = long.Parse(original.AsSpan(0, WordIndex - 2));
+            }
+            catch (Exception e)
+            {
+                Log.Logger.Error(e, $"Original: {Original}; WordIndex:{WordIndex}");
+                throw;
+            };
         }
 
         public int WordIndex { get; }

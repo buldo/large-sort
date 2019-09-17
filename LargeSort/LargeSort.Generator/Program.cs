@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using CommandLine;
-using LargeSort.FileSystem;
 
 namespace LargeSort.Generator
 {
@@ -16,7 +15,7 @@ namespace LargeSort.Generator
 
         private static void GenerateData(Options options)
         {
-            var writer = new FileStreamWriter(options.OutputFile, FileMode.Create);
+            var writer = new StreamWriter(options.OutputFile, false);
             var generator = new Logic.Generator(options.DictionaryFile, writer);
             var watch = Stopwatch.StartNew();
             generator.Generate(options.SizeInGb * (long)1073741824);

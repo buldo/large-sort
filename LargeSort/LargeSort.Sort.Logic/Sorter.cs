@@ -32,7 +32,7 @@ namespace LargeSort.Sort.Logic
         public void Sort(int bathSize, IWriter outputWriter, int parallels)
         {
             _preSorter.PreSort(_inputFile,_tempFolder,_sortingAlgorithm,bathSize, parallels);
-            _filesMerge.Merge(_tempFolder, outputWriter);
+            //_filesMerge.Merge(_tempFolder, outputWriter);
         }
     }
 }

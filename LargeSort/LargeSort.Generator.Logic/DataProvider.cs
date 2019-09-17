@@ -4,7 +4,6 @@ namespace LargeSort.Generator.Logic
 {
     internal class DataProvider
     {
-
         private readonly Random _random = new Random();
         private readonly WordsProvider _wordsProvider;
 

@@ -5,18 +5,11 @@ namespace LargeSort.FileSystem
 {
     public class FileStreamWriter : IWriter
     {
-        private readonly FileStream _stream;
         private readonly StreamWriter _streamWriter;
 
-        public FileStreamWriter(string path, FileMode mode)
+        public FileStreamWriter(string path, bool append)
         {
-            _stream = new FileStream(path, mode, FileAccess.Write, FileShare.None, 8192);
-            _streamWriter = new StreamWriter(_stream);
-        }
-
-        public void Append(byte[] data)
-        {
-            _streamWriter.Write(data);
+            _streamWriter = new StreamWriter(path, append);
         }
 
         public void Append(ReadOnlySpan<byte> data)
@@ -32,14 +25,12 @@ namespace LargeSort.FileSystem
         public void Flush()
         {
             _streamWriter.Flush();
-            _stream.Flush(true);
         }
 
         public void Dispose()
         {
             Flush();
             _streamWriter.Dispose();
-            _stream.Dispose();
         }
     }
 }

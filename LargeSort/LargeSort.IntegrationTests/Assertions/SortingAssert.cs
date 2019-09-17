@@ -12,12 +12,14 @@ namespace LargeSort.IntegrationTests.Assertions
         {
             string prevLine = string.Empty;
             Assert.True(File.Exists(path));
-            using var reader = new StreamReader(path);
-            string currentLine = null;
-            while ((currentLine = reader.ReadLine()) != null)
+            using (var reader = new StreamReader(path))
             {
-                Assert.LessOrEqual(comparer.Compare(prevLine, currentLine), 0);
-                prevLine = currentLine;
+                string currentLine = null;
+                while ((currentLine = reader.ReadLine()) != null)
+                {
+                    Assert.LessOrEqual(comparer.Compare(prevLine, currentLine), 0);
+                    prevLine = currentLine;
+                }
             }
         }
     }

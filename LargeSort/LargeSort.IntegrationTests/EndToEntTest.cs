@@ -26,7 +26,7 @@ namespace LargeSort.IntegrationTests
         public void GenerateAndSortMultiChunkSuccess()
         {
             const string randomFileName = "random";
-            using (var writer = new FileStreamWriter(randomFileName, FileMode.Create))
+            using (var writer = new StreamWriter(randomFileName, false))
             {
                 var generator = new Generator.Logic.Generator(
                     Path.Combine(TestContext.CurrentContext.TestDirectory, "dictionary.txt"),
@@ -45,7 +45,7 @@ namespace LargeSort.IntegrationTests
                 fileInfo.Delete();
             }
 
-            using (var writer = new FileStreamWriter(sortedFileName, FileMode.Create))
+            using (var writer = new FileStreamWriter(sortedFileName, false))
             {
                 sorter.Sort(64 * 1048576, writer, 8);
                 writer.Flush();

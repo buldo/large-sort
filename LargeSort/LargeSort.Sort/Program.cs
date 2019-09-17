@@ -26,7 +26,7 @@ namespace LargeSort.Sort
             var watch = Stopwatch.StartNew();
             var tempDir = Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(options.OutputFile), Path.GetRandomFileName()));
             var sorter = new Sorter(options.InputFile, tempDir.FullName, SortingAlgorithms.Simple, logger);
-            using (var writer = new FileStreamWriter(options.OutputFile, FileMode.Create))
+            using (var writer = new FileStreamWriter(options.OutputFile, true))
             {
                 sorter.Sort(256 * 1048576, writer, options.ThreadsCount);
             }

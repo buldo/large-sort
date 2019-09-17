@@ -14,8 +14,9 @@ namespace LargeSort.Sort.Logic
 {
     class ConveyorPreSorter
     {
-        private static readonly byte[] NewLineBytes = Encoding.UTF8.GetBytes(Environment.NewLine);
+        private static readonly object IoLock = new object();
         private readonly ILogger _logger;
+        private readonly ManualResetEventSlim _readEvent = new ManualResetEventSlim(true);
 
         public ConveyorPreSorter(ILogger logger)
         {
@@ -26,26 +27,40 @@ namespace LargeSort.Sort.Logic
         {
             _logger.Information("Pre sorting");
             var watch = Stopwatch.StartNew();
-            using (var reader = new BatchFileReader(inputFile))
+
+            using (var reader = new BatchFileReader(inputFile, _readEvent))
             {
-                var semaphore = new SemaphoreSlim(parallels, parallels);
+                //var semaphore = new SemaphoreSlim(parallels, parallels);
 
                 var tasks = new List<Task>();
 
                 List<CompositeString> readed;
                 while ((readed = ReadNext(reader, bathSize, _logger)).Count != 0)
                 {
-                    semaphore.Wait();
-                    var clone = readed.ToList();
-                    tasks.Add(
-                        Task.Factory.StartNew(
-                            () => StartSortAndWrite(
-                                sortingAlgorithm,
-                                clone,
-                                tempFolder,
-                                semaphore,
-                                _logger),
-                            TaskCreationOptions.LongRunning));
+                    //  semaphore.Wait();
+                    //  _logger.Debug($"{parallels-semaphore.CurrentCount} потоков работает");
+
+                    using (var writer = new FileStreamWriter(Path.Combine(tempFolder, Path.GetRandomFileName()), false))
+                    {
+                        sortingAlgorithm.Sort(readed);
+                        foreach (var s in readed)
+                        {
+                            writer.AppendLine(s.Original);
+                        }
+                    }
+                   // continue;
+                    //    var clone = readed.ToList();
+
+                    //tasks.Add(
+                    //    Task.Factory.StartNew(
+                    //        () => StartSortAndWrite(
+                    //            sortingAlgorithm,
+                    //            clone,
+                    //            tempFolder,
+                    //            semaphore,
+                    //            _readEvent,
+                    //            _logger),
+                    //        TaskCreationOptions.LongRunning));
                 }
 
                 Task.WaitAll(tasks.ToArray());
@@ -57,7 +72,11 @@ namespace LargeSort.Sort.Logic
         private static List<CompositeString> ReadNext(BatchFileReader readerWriter, int size, ILogger logger)
         {
             logger.Debug("Reading next batch");
-            var strings = readerWriter.ReadNextBath(size);
+            List<CompositeString> strings;
+            //lock (IoLock)
+            {
+                strings = readerWriter.ReadNextBath(size);
+            }
             logger.Debug($"Read {strings.Count} lines");
 
             return strings;
@@ -68,21 +87,26 @@ namespace LargeSort.Sort.Logic
             List<CompositeString> toSort,
             string tempFolder,
             SemaphoreSlim semaphore,
+            ManualResetEventSlim readEvent,
             ILogger logger)
         {
             logger.Debug("Sorting");
             sortingAlgorithm.Sort(toSort);
 
-            using (var writer = new FileStreamWriter(Path.Combine(tempFolder, Path.GetRandomFileName()), FileMode.Create))
+            using (var writer = new FileStreamWriter(Path.Combine(tempFolder, Path.GetRandomFileName()), false))
             {
                 logger.Debug("Writing");
-                foreach (var line in toSort)
-                {
-                    writer.Append(Encoding.UTF8.GetBytes(line.Original));
-                    writer.Append(NewLineBytes);
-                }
 
-                writer.Flush();
+                //lock(IoLock)
+                {
+                    //readEvent.Reset();
+                    foreach (var line in toSort)
+                    {
+                        writer.AppendLine(line.Original);
+                    }
+
+                   // readEvent.Set();
+                }
             }
 
             semaphore.Release();

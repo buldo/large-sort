@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Text;
-using LargeSort.FileSystem;
 
 namespace LargeSort.Generator.Logic
 {
     public class Generator : IDisposable
     {
-        private readonly IWriter _writer;
+        private readonly StreamWriter _writer;
         private readonly DataProvider _dataProvider;
 
         /// <param name="dictionaryPath">Путь к словарю</param>
         /// <param name="writer">Через что будем писать</param>
-        public Generator(string dictionaryPath, IWriter writer)
+        public Generator(string dictionaryPath, StreamWriter writer)
         {
             _writer = writer;
             _dataProvider = new DataProvider(dictionaryPath);
@@ -30,9 +29,9 @@ namespace LargeSort.Generator.Logic
             {
                 toWrite = $"{_dataProvider.GetNextNumber(100)}. {_dataProvider.GetNextWord()}";
                 generated += Encoding.UTF8.GetByteCount(toWrite) +2; // минус пара байт на перенос строки
-                _writer.AppendLine(toWrite);
+                _writer.WriteLine(toWrite);
             }
-            _writer.AppendLine(toWrite);
+            _writer.WriteLine(toWrite);
 
             _writer.Flush();
         }
