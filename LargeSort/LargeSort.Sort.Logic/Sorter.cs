@@ -1,67 +1,35 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using LargeSort.Sort.Logic.PreSorting;
+using Serilog;
 
 namespace LargeSort.Sort.Logic
 {
     public class Sorter
     {
         private readonly string _inputFile;
-        private readonly List<Task> _sortTasks = new List<Task>();
-        private readonly List<Task> _writeTasks = new List<Task>();
-        private readonly ConcurrentBag<SortingTask> _tasksForReuse = new ConcurrentBag<SortingTask>();
+        private readonly ILogger _logger;
 
-        public Sorter(string inputFile)
+        public Sorter(string inputFile, ILogger logger)
         {
             _inputFile = inputFile;
+            _logger = logger;
         }
 
         public void Sort(string outFile, int count)
         {
             var tempFolder = Path.Combine(Path.GetDirectoryName(outFile), Path.GetRandomFileName());
-            Directory.CreateDirectory(tempFolder);
-            using (var reader =
-                new StreamReader(new FileStream(_inputFile, FileMode.Open, FileAccess.Read, FileShare.None)))
-            {
-                var semaphore = new SemaphoreSlim(count, count);
-                while (true)
-                {
-                    var task = GetTask(reader);
 
-                    if (!task.Read())
-                    {
-                        break;
-                    }
-
-                    semaphore.Wait();
-                    var sortTask = task.Sort();
-                    sortTask.ContinueWith(task1 =>
-                    {
-                        var t = Task.Run(() =>
-                        {
-                            task1.Result.Write(Path.Combine(tempFolder, Path.GetRandomFileName()), semaphore);
-                            _tasksForReuse.Add(task1.Result);
-                        });
-                        _writeTasks.Add(t);
-                    });
-                    _sortTasks.Add(sortTask);
-                }
-
-                Task.WaitAll(_sortTasks.ToArray());
-                Task.WaitAll(_writeTasks.ToArray());
-            }
+            var preSorter = new PreSorter(_inputFile);
+            var watch = Stopwatch.StartNew();
+            preSorter.PreSort(tempFolder, count);
+            watch.Stop();
+            _logger.Information($"Presorting for {watch.Elapsed.ToString()}");
         }
 
-        private SortingTask GetTask(StreamReader reader)
-        {
-            if (_tasksForReuse.TryTake(out var task))
-            {
-                return task;
-            }
-
-            return new SortingTask(reader);
-        }
     }
 }

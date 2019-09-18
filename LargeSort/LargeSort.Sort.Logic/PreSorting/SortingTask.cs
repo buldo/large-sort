@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace LargeSort.Sort.Logic
+namespace LargeSort.Sort.Logic.PreSorting
 {
     class SortingTask
     {

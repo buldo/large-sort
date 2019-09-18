@@ -39,7 +39,7 @@ namespace LargeSort.IntegrationTests
             const string sortedFileName = "sorted";
             File.Delete(sortedFileName);
             var sortedDir = Directory.CreateDirectory(TestContext.CurrentContext.Test.Name);
-            var sorter = new Sorter(randomFileName, sortedDir.FullName, SortingAlgorithms.Simple, _logger);
+            var sorter = new Sorter(randomFileName, _logger);
             foreach (var fileInfo in sortedDir.GetFiles())
             {
                 fileInfo.Delete();
@@ -47,7 +47,7 @@ namespace LargeSort.IntegrationTests
 
             using (var writer = new FileStreamWriter(sortedFileName, false))
             {
-                sorter.Sort(64 * 1048576, writer, 8);
+                sorter.Sort(sortedDir.FullName, 8);
                 writer.Flush();
             }
 
