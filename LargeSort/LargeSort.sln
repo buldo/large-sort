@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29230.61
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LargeSort.Generator", "LargeSort.Generator\LargeSort.Generator.csproj", "{A7DF6E8D-263C-4348-A8A8-05C150AC9259}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LargeSort.FileSystem", "LargeSort.FileSystem\LargeSort.FileSystem.csproj", "{13D4878B-C7FD-49CE-BC3A-7CEF2654DE25}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LargeSort.Generator.Logic", "LargeSort.Generator.Logic\LargeSort.Generator.Logic.csproj", "{2509002D-58C8-4678-ABA5-76C50B0A6888}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LargeSort.Sort", "LargeSort.Sort\LargeSort.Sort.csproj", "{7196ACDE-9839-48E3-9FC7-23B96096BFE0}"
@@ -29,10 +27,6 @@ Global
 		{A7DF6E8D-263C-4348-A8A8-05C150AC9259}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7DF6E8D-263C-4348-A8A8-05C150AC9259}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7DF6E8D-263C-4348-A8A8-05C150AC9259}.Release|Any CPU.Build.0 = Release|Any CPU
-		{13D4878B-C7FD-49CE-BC3A-7CEF2654DE25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{13D4878B-C7FD-49CE-BC3A-7CEF2654DE25}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{13D4878B-C7FD-49CE-BC3A-7CEF2654DE25}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{13D4878B-C7FD-49CE-BC3A-7CEF2654DE25}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2509002D-58C8-4678-ABA5-76C50B0A6888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2509002D-58C8-4678-ABA5-76C50B0A6888}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2509002D-58C8-4678-ABA5-76C50B0A6888}.Release|Any CPU.ActiveCfg = Release|Any CPU
