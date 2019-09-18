@@ -6,7 +6,19 @@ namespace LargeSort.Sort.Logic
     {
         public int Compare(CompositeString x, CompositeString y)
         {
-            return x.CompareTo(x);
+            return CompareTo(x, y);
+        }
+
+        private static int CompareTo(CompositeString x, CompositeString y)
+        {
+            int result = string.CompareOrdinal(x.Word, x.Word);
+
+            if (result == 0)
+            {
+                result = x.Number.CompareTo(y.Number);
+            }
+
+            return result;
         }
     }
 }

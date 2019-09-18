@@ -26,7 +26,7 @@ namespace LargeSort.Sort
             var sorter = new Sorter(obj.InputFile, logger);
             sorter.Sort(obj.OutputFile, obj.ThreadsCount);
             watch.Stop();
-            Console.WriteLine($"Elapsed {watch.Elapsed.ToString()}");
+            Console.WriteLine($"Sorted in {watch.Elapsed.ToString()}");
         }
     }
 }

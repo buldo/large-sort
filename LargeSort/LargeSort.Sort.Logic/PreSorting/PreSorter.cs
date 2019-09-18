@@ -22,7 +22,6 @@ namespace LargeSort.Sort.Logic.PreSorting
 
         public void PreSort(string tempFolder, int count)
         {
-            Directory.CreateDirectory(tempFolder);
             using (var reader =
                 new StreamReader(new FileStream(_inputFile, FileMode.Open, FileAccess.Read, FileShare.None)))
             {
@@ -37,6 +36,7 @@ namespace LargeSort.Sort.Logic.PreSorting
                     }
 
                     semaphore.Wait();
+
                     var sortTask = task.Sort();
                     sortTask.ContinueWith(task1 =>
                     {
@@ -52,6 +52,8 @@ namespace LargeSort.Sort.Logic.PreSorting
 
                 Task.WaitAll(_sortTasks.ToArray());
                 Task.WaitAll(_writeTasks.ToArray());
+                _sortTasks.Clear();
+                _writeTasks.Clear();
             }
         }
 

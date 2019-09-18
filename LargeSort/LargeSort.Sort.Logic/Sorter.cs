@@ -1,9 +1,11 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using LargeSort.Sort.Logic.Merge;
 using LargeSort.Sort.Logic.PreSorting;
 using Serilog;
 
@@ -23,12 +25,19 @@ namespace LargeSort.Sort.Logic
         public void Sort(string outFile, int count)
         {
             var tempFolder = Path.Combine(Path.GetDirectoryName(outFile), Path.GetRandomFileName());
+            Directory.CreateDirectory(tempFolder);
 
-            var preSorter = new PreSorter(_inputFile);
             var watch = Stopwatch.StartNew();
+            var preSorter = new PreSorter(_inputFile);
             preSorter.PreSort(tempFolder, count);
             watch.Stop();
-            _logger.Information($"Presorting for {watch.Elapsed.ToString()}");
+            Console.WriteLine($"Presorting for {watch.Elapsed.ToString()}");
+
+            watch = Stopwatch.StartNew();
+            var merge = new MultiFilesMerge();
+            merge.Merge(tempFolder, outFile);
+            watch.Stop();
+            Console.WriteLine($"Merging for {watch.Elapsed.ToString()}");
         }
 
     }
