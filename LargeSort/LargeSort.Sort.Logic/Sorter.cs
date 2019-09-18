@@ -1,38 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using LargeSort.FileSystem;
-using LargeSort.Sort.Logic.Merge;
-using LargeSort.Sort.Logic.Sorting;
-using Serilog;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LargeSort.Sort.Logic
 {
     public class Sorter
     {
         private readonly string _inputFile;
-        private readonly string _tempFolder;
-        private readonly ISortingAlgorithm _sortingAlgorithm;
-        private readonly ILogger _logger;
-        private readonly ConveyorPreSorter _preSorter;
-        private readonly MultiWayFilesMerge _filesMerge;
+        private readonly List<Task> _sortTasks = new List<Task>();
+        private readonly List<Task> _writeTasks = new List<Task>();
 
-        public Sorter(string inputFile, string tempFolder, ISortingAlgorithm sortingAlgorithm, ILogger logger)
+        public Sorter(string inputFile)
         {
             _inputFile = inputFile;
-            _tempFolder = tempFolder;
-            _sortingAlgorithm = sortingAlgorithm;
-            _logger = logger;
-            _preSorter = new ConveyorPreSorter(logger);
-            _filesMerge = new MultiWayFilesMerge(logger);
         }
 
-        public void Sort(int bathSize, IWriter outputWriter, int parallels)
+        public void Sort(string outFile, int cnt)
         {
-            _preSorter.PreSort(_inputFile,_tempFolder,_sortingAlgorithm,bathSize, parallels);
-            //_filesMerge.Merge(_tempFolder, outputWriter);
+            var tempFolder = Path.Combine(Path.GetDirectoryName(outFile), Path.GetRandomFileName());
+            Directory.CreateDirectory(tempFolder);
+            using (var reader =
+                new StreamReader(new FileStream(_inputFile, FileMode.Open, FileAccess.Read, FileShare.None)))
+            {
+                var semaphore = new SemaphoreSlim(cnt, cnt);
+                while (true)
+                {
+                    var task = new SortingTask(reader);
+
+                    if (!task.Read())
+                    {
+                        break;
+                    }
+
+                    semaphore.Wait();
+                    var sortTask = task.Sort();
+                    sortTask.ContinueWith(task1 =>
+                    {
+                        var t = Task.Run(() =>
+                        {
+                            task1.Result.Write(Path.Combine(tempFolder, Path.GetRandomFileName()), semaphore);
+                        });
+                        _writeTasks.Add(t);
+                    });
+                    _sortTasks.Add(sortTask);
+                }
+
+                Task.WaitAll(_sortTasks.ToArray());
+                Task.WaitAll(_writeTasks.ToArray());
+            }
         }
     }
 }

@@ -12,11 +12,17 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.6.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LargeSort.Sort.Logic\LargeSort.Sort.Logic.csproj" />
   </ItemGroup>
+
+
+
+  <PropertyGroup>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+  </PropertyGroup>
 
 </Project>
