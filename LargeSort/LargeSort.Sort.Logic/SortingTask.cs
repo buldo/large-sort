@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,44 +8,50 @@ namespace LargeSort.Sort.Logic
 {
     class SortingTask
     {
+        private const int MaxCount = 6000000;
         private static readonly CompositeStringComparer Comparer = new CompositeStringComparer();
-        private StreamReader _reader;
-        private List<string> _stringList = new List<string>(6000000);
-        private List<CompositeString> _list = new List<CompositeString>(6000000);
+        private readonly StreamReader _reader;
+        private readonly string[] _stringList = new string[MaxCount];
+        private readonly CompositeString[] _list = new CompositeString[MaxCount];
 
         public SortingTask(StreamReader reader)
         {
             _reader = reader;
+            for (int i = 0; i < MaxCount; i++)
+            {
+                _list[i] = new CompositeString();
+            }
         }
+
+        public int Count { get; private set; }
 
         public bool Read()
         {
             string line;
-            long cnt = 0;
+            Count = 0;
             while ((line = _reader.ReadLine()) != null)
             {
-                cnt++;
-                _stringList.Add(line);
-                if (cnt >= 6000000)
+                _stringList[Count] = line;
+                Count++;
+                if (Count >= MaxCount)
                 {
                     break;
                 }
             }
 
-            return _stringList.Count != 0;
+            return Count != 0;
         }
 
         public Task<SortingTask> Sort()
         {
             return Task.Factory.StartNew(() =>
             {
-                foreach (var line in _stringList)
+                for (int i = 0; i < Count; i++)
                 {
-                    _list.Add(new CompositeString(line));
+                    _list[i].Init(_stringList[i]);
                 }
 
-                _stringList = null;
-                _list.Sort(Comparer);
+                Array.Sort(_list, 0, Count, Comparer);
                 return this;
             });
         }
@@ -53,15 +60,13 @@ namespace LargeSort.Sort.Logic
         {
             using (var writer = new StreamWriter(path))
             {
-                foreach (var line in _list)
+                for (int i = 0; i < Count; i++)
                 {
-                    writer.WriteLine($"{line.Number}. {line.Word}");
+                    writer.WriteLine(_list[i].Original);
                 }
             }
 
             semaphore.Release();
-            _list = null;
-            _reader = null;
         }
     }
 }
