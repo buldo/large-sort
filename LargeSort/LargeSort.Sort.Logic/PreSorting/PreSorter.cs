@@ -14,6 +14,7 @@ namespace LargeSort.Sort.Logic.PreSorting
         private readonly List<Task> _sortTasks = new List<Task>();
         private readonly List<Task> _writeTasks = new List<Task>();
         private readonly ConcurrentBag<SortingTask> _tasksForReuse = new ConcurrentBag<SortingTask>();
+        private object _ioLock = new object();
 
         public PreSorter(string inputFile)
         {
@@ -30,6 +31,7 @@ namespace LargeSort.Sort.Logic.PreSorting
                 {
                     var task = GetTask(reader);
 
+                    lock (_ioLock)
                     if (!task.Read())
                     {
                         break;
@@ -42,7 +44,8 @@ namespace LargeSort.Sort.Logic.PreSorting
                     {
                         var t = Task.Run(() =>
                         {
-                            task1.Result.Write(Path.Combine(tempFolder, Path.GetRandomFileName()), semaphore);
+                            lock (_ioLock)
+                                task1.Result.Write(Path.Combine(tempFolder, Path.GetRandomFileName()), semaphore);
                             _tasksForReuse.Add(task1.Result);
                         });
                         _writeTasks.Add(t);

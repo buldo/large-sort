@@ -25,13 +25,13 @@ namespace LargeSort.IntegrationTests
         public void GenerateAndSortMultiChunkSuccess()
         {
             const string randomFileName = "random";
-            //using (var writer = new StreamWriter(randomFileName, false))
-            //{
-            //    var generator = new Generator.Logic.Generator(
-            //        Path.Combine(TestContext.CurrentContext.TestDirectory, "dictionary.txt"),
-            //        writer);
-            //    generator.Generate(256 * 1048576);
-            //}
+            using (var writer = new StreamWriter(randomFileName, false))
+            {
+                var generator = new Generator.Logic.Generator(
+                    Path.Combine(TestContext.CurrentContext.TestDirectory, "dictionary.txt"),
+                    writer);
+                generator.Generate(256 * 1048576);
+            }
 
             var sortWatch = Stopwatch.StartNew();
 

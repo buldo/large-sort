@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using HPCsharp;
@@ -8,7 +9,7 @@ namespace LargeSort.Sort.Logic.PreSorting
 {
     class SortingTask
     {
-        private const int MaxCount = 262144;
+        private const int MaxCount = 2097152;
         private static readonly CompositeStringComparer Comparer = new CompositeStringComparer();
         private readonly StreamReader _reader;
         private readonly string[] _stringList = new string[MaxCount];
@@ -60,11 +61,13 @@ namespace LargeSort.Sort.Logic.PreSorting
 
         public void Write(string path, SemaphoreSlim semaphore)
         {
-            using (var writer = new StreamWriter(path))
+            using (var writer = new BufferedStream(new FileStream(path, FileMode.Create), 26 * 1048576) )
             {
+                var end = Encoding.UTF8.GetBytes(Environment.NewLine);
                 for (int i = 0; i < Count; i++)
                 {
-                    writer.WriteLine(_list[i].Original);
+                    writer.Write(Encoding.UTF8.GetBytes(_list[i].Original));
+                    writer.Write(end);
                 }
             }
 

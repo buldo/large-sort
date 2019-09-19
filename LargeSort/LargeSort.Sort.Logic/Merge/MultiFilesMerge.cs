@@ -12,19 +12,35 @@ namespace LargeSort.Sort.Logic.Merge
 
             using (var writer = new StreamWriter(outputFile))
             {
-                //var list = new List<string>();
-                //int i = 0;
+                const int bufferSize = 91750400;
+                var buffer = new string[bufferSize];
+                var cnt = 0;
+
                 while (set.Count != 0)
                 {
                     var min = set.Min;
                     set.Remove(min);
-                    writer.WriteLine(min.Current.Original);
-                    //i++;
-                    //list.Add($"{i}_{min.Current.Original}");
+                    buffer[cnt] = min.Current.Original;
+                    cnt++;
+                    if (cnt == bufferSize)
+                    {
+                        for (int i = 0; i < cnt; i++)
+                        {
+                            writer.WriteLine(buffer[i]);
+                        }
+
+                        cnt = 0;
+                    }
+
                     if (min.Next())
                     {
                         set.Add(min);
                     }
+                }
+
+                for (int i = 0; i < cnt; i++)
+                {
+                    writer.WriteLine(buffer[i]);
                 }
             }
         }
