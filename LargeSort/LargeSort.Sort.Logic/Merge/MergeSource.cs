@@ -23,6 +23,8 @@ namespace LargeSort.Sort.Logic.Merge
                 }
             }
         }
+
+        public bool IsEnded { get; private set; }
         public string FileName { get; }
         public CompositeString Current { get; } = new CompositeString();
 
@@ -35,6 +37,7 @@ namespace LargeSort.Sort.Logic.Merge
                 return true;
             }
 
+            IsEnded = true;
             return false;
         }
     }

@@ -45,7 +45,6 @@ namespace LargeSort.IntegrationTests
             }
 
             sorter.Sort(sortedFileName, 8);
-
             SortingAssert.FileSorted(sortedFileName, new CompositeStringComparer());
 
             var expectedLines = File.ReadAllLines(randomFileName).Length;

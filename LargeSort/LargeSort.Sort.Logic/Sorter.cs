@@ -33,11 +33,11 @@ namespace LargeSort.Sort.Logic
             watch.Stop();
             Console.WriteLine($"Presorting for {watch.Elapsed.ToString()}");
 
-            //watch = Stopwatch.StartNew();
-            //var merge = new MultiFilesMerge();
-            //merge.Merge(tempFolder, outFile);
-            //watch.Stop();
-            //Console.WriteLine($"Merging for {watch.Elapsed.ToString()}");
+            watch = Stopwatch.StartNew();
+            var merge = new MultiFilesMerge(tempFolder);
+            merge.MultiLevelMerge(outFile);
+            watch.Stop();
+            Console.WriteLine($"Merging for {watch.Elapsed.ToString()}");
         }
 
     }
