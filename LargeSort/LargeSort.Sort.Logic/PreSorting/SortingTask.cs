@@ -9,7 +9,7 @@ namespace LargeSort.Sort.Logic.PreSorting
 {
     class SortingTask
     {
-        private const int MaxCount = 2097152;
+        private const int MaxCount = 65536;
         private static readonly CompositeStringComparer Comparer = new CompositeStringComparer();
         private readonly StreamReader _reader;
         private readonly string[] _stringList = new string[MaxCount];

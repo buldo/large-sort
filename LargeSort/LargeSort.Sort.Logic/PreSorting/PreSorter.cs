@@ -31,7 +31,7 @@ namespace LargeSort.Sort.Logic.PreSorting
                 {
                     var task = GetTask(reader);
 
-                    lock (_ioLock)
+                    //lock (_ioLock)
                     if (!task.Read())
                     {
                         break;
@@ -44,7 +44,7 @@ namespace LargeSort.Sort.Logic.PreSorting
                     {
                         var t = Task.Run(() =>
                         {
-                            lock (_ioLock)
+                            //lock (_ioLock)
                                 task1.Result.Write(Path.Combine(tempFolder, Path.GetRandomFileName()), semaphore);
                             _tasksForReuse.Add(task1.Result);
                         });
