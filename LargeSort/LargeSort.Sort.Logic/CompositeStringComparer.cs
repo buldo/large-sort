@@ -11,7 +11,7 @@ namespace LargeSort.Sort.Logic
 
         private static int CompareTo(CompositeString x, CompositeString y)
         {
-            int result = string.CompareOrdinal(x.Word, x.Word);
+            int result = string.CompareOrdinal(x.Word, y.Word);
 
             if (result == 0)
             {
