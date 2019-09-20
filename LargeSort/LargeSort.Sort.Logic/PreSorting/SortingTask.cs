@@ -54,7 +54,7 @@ namespace LargeSort.Sort.Logic.PreSorting
 
                 _list = _list.SortMergePar(Comparer);
 
-                Array.Sort(_list, 0, Count, Comparer);
+                //Array.Sort(_list, 0, Count, Comparer);
                 return this;
             });
         }
