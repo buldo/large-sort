@@ -15,7 +15,7 @@ namespace LargeSort.Sort.Logic.Merge
                 try
                 {
                     var reader = new StreamReader(fileName);
-                    _buffer = new StringsBuffer(10000, reader);
+                    _buffer = new StringsBuffer(5000, reader);
                     break;
                 }
                 catch

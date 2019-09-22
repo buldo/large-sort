@@ -22,22 +22,23 @@ namespace LargeSort.Sort.Logic
             _logger = logger;
         }
 
-        public void Sort(string outFile, int count)
+        public void Sort(string outFile)
         {
             var tempFolder = Path.Combine(Path.GetDirectoryName(outFile), Path.GetRandomFileName());
             Directory.CreateDirectory(tempFolder);
 
             var watch = Stopwatch.StartNew();
             var preSorter = new PreSorter(_inputFile);
-            preSorter.PreSort(tempFolder, count);
+            preSorter.PreSort(tempFolder);
             watch.Stop();
-            Console.WriteLine($"Presorting for {watch.Elapsed.ToString()}");
+            _logger.Information($"Presorting for {watch.Elapsed.ToString()}");
 
             watch = Stopwatch.StartNew();
             var merge = new MultiFilesMerge(tempFolder);
+            //var merge = new MultiFilesMerge(@"D:\testFolder\test-merge");
             merge.MultiLevelMerge(outFile);
             watch.Stop();
-            Console.WriteLine($"Merging for {watch.Elapsed.ToString()}");
+            _logger.Information($"Merging for {watch.Elapsed.ToString()}");
         }
 
     }

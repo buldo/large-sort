@@ -14,6 +14,7 @@ namespace LargeSort.Sort.Logic.PreSorting
         private readonly List<Task> _sortTasks = new List<Task>();
         private readonly List<Task> _writeTasks = new List<Task>();
         private readonly ConcurrentBag<SortingTask> _tasksForReuse = new ConcurrentBag<SortingTask>();
+        private readonly int _threads = Environment.ProcessorCount;
         private object _ioLock = new object();
 
         public PreSorter(string inputFile)
@@ -21,12 +22,12 @@ namespace LargeSort.Sort.Logic.PreSorting
             _inputFile = inputFile;
         }
 
-        public void PreSort(string tempFolder, int count)
+        public void PreSort(string tempFolder)
         {
             using (var reader =
                 new StreamReader(new FileStream(_inputFile, FileMode.Open, FileAccess.Read, FileShare.None)))
             {
-                var semaphore = new SemaphoreSlim(count, count);
+                var semaphore = new SemaphoreSlim(_threads, _threads);
                 while (true)
                 {
                     var task = GetTask(reader);

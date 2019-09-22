@@ -2,7 +2,7 @@
 
 namespace LargeSort.Sort.Logic
 {
-    class CompositeStringComparer : IComparer<CompositeString>
+    public class CompositeStringComparer : IComparer<CompositeString>
     {
         public int Compare(CompositeString x, CompositeString y)
         {

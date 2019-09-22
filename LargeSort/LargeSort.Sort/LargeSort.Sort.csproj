@@ -5,6 +5,8 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <ServerGarbageCollection>true</ServerGarbageCollection>
     <PlatformTarget>x64</PlatformTarget>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
